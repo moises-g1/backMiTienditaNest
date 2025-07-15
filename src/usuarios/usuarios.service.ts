@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { RolUsuario } from 'src/common/enums/usuario_rol.enum';
+import * as bcrypt from 'bcrypt';
 
 
 @Injectable()
@@ -14,12 +15,15 @@ export class UsuariosService {
   private usuarioRepo: Repository<Usuario>){ }
 
 
-  async createUsuario(createUsuarioDto: CreateUsuarioDto) {
+ async createUsuario(createUsuarioDto: CreateUsuarioDto) {
   try {
-    // Asignar rol por defecto si no viene en el DTO
     if (!createUsuarioDto.rol) {
       createUsuarioDto.rol = RolUsuario.EMPLEADO;
     }
+
+    // Encriptar la contraseña antes de guardar
+    const salt = await bcrypt.genSalt(); // o bcrypt.genSalt(10)
+    createUsuarioDto.password = await bcrypt.hash(createUsuarioDto.password, salt);
 
     const newUsuario = this.usuarioRepo.create(createUsuarioDto);
     await this.usuarioRepo.save(newUsuario);
@@ -57,21 +61,29 @@ export class UsuariosService {
 
 
 
-  async updateUsuario(id: number, updateUsuarioDto: UpdateUsuarioDto) {
-    try {
-      const usuario = await this.usuarioRepo.findOneBy({ id });
-      if (!usuario) {
-        throw new NotFoundException(`usuario con el id: ${id} no encontrado`);
-      }
-      const updateUsuario = this.usuarioRepo.merge(usuario, updateUsuarioDto);
-      return await this.usuarioRepo.save(updateUsuario);
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      throw new InternalServerErrorException('Error al actualizar el usuario');
+ async updateUsuario(id: number, updateUsuarioDto: UpdateUsuarioDto) {
+  try {
+    const usuario = await this.usuarioRepo.findOneBy({ id });
+    if (!usuario) {
+      throw new NotFoundException(`usuario con el id: ${id} no encontrado`);
     }
+
+    // Si el DTO tiene una nueva contraseña, se encripta
+    if (updateUsuarioDto.password) {
+      const salt = await bcrypt.genSalt();
+      updateUsuarioDto.password = await bcrypt.hash(updateUsuarioDto.password, salt);
+    }
+
+    const updateUsuario = this.usuarioRepo.merge(usuario, updateUsuarioDto);
+    return await this.usuarioRepo.save(updateUsuario);
+  } catch (error) {
+    if (error instanceof NotFoundException) {
+      throw error;
+    }
+    throw new InternalServerErrorException('Error al actualizar el usuario');
   }
+}
+
 
   
 

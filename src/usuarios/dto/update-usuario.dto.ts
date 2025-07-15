@@ -25,6 +25,7 @@ export class UpdateUsuarioDto {
     @IsString()
     password:string
 
+    @IsOptional()
     @IsEnum(RolUsuario, { message: 'Rol debe ser admin o empleado' })
   rol?: RolUsuario; // opcional si tiene default
 

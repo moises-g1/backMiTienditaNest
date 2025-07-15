@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CategoriasModule } from './categorias/categorias.module';
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       database: 'tiendita_db',
       autoLoadEntities:true,
       synchronize: true,
-    })
+    }),
+    CategoriasModule
   ],
   controllers: [AppController],
   providers: [AppService],

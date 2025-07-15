@@ -12,6 +12,10 @@ export class CreateUsuarioDto {
     @IsString()
     apellido:string
 
+    @IsNotEmpty()
+    @IsString()
+    imagen:string
+
     @IsNumber()
     @IsNotEmpty()
     edad:number
@@ -26,7 +30,8 @@ export class CreateUsuarioDto {
     @IsString()
     password:string
 
-    @IsEnum(RolUsuario, { message: 'Rol debe ser admin o empleado' })
-  rol?: RolUsuario; // opcional si tiene default
+    @IsNotEmpty()
+    @IsEnum(RolUsuario, { message: 'El rol debe ser admin o empleado' })
+  rol?: RolUsuario; // Puede venir vacío
 
 }

@@ -11,6 +11,8 @@ export class Usuario {
     @Column()
     apellido:string
     @Column()
+    imagen:string
+    @Column()
     edad:number
     @Column({unique: true})
     email:string

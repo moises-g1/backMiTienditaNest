@@ -1,22 +1,26 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsString, Length } from "class-validator"
+import { IsEnum, IsNumber, IsOptional, IsString, Length } from "class-validator"
 import { RolUsuario } from "src/common/enums/usuario_rol.enum"
 
 export class UpdateUsuarioDto {
-    @IsNotEmpty()
+    @IsOptional()
     @Length(3,20)
     @IsString()
     nombre:string
 
-    @IsNotEmpty()
+    @IsOptional()
     @Length(3,20)
     @IsString()
     apellido:string
 
+    @IsOptional()
+    @IsString()
+    imagen:string
+
     @IsNumber()
-    @IsNotEmpty()
+    @IsOptional()
     edad:number
 
-    @IsNotEmpty()
+    @IsOptional()
     @Length(3,30)
     @IsString()
     password:string

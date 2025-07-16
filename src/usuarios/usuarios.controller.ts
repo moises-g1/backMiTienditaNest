@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {
   Controller,
   Get,
@@ -24,7 +27,10 @@ class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredRole = this.reflector.get<string>('role', context.getHandler());
+    const requiredRole = this.reflector.get<string>(
+      'role',
+      context.getHandler(),
+    );
     if (!requiredRole) {
       return true;
     }
@@ -33,7 +39,9 @@ class RolesGuard implements CanActivate {
     // Aquí solo para demo, se toma el rol de un header
     const userRole = request.headers['x-rol'] || request.headers['x-role'];
     if (userRole !== requiredRole) {
-      throw new ForbiddenException('No tienes permisos para realizar esta acción');
+      throw new ForbiddenException(
+        'No tienes permisos para realizar esta acción',
+      );
     }
     return true;
   }

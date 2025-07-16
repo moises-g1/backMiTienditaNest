@@ -17,8 +17,8 @@ import { UsuariosModule } from './usuarios/usuarios.module';
       autoLoadEntities:true,
       synchronize: true,
     }),
-    CategoriasModule
-    UsuariosModule
+    CategoriasModule,
+    UsuariosModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -27,6 +27,8 @@ import { ComprasModule } from './compras/compras.module';
     ProveedoresModule,
     ComprasModule,
     CategoriasModule,
+    CategoriasModule,
+    UsuariosModule,
   ],
   controllers: [AppController],
   providers: [AppService],

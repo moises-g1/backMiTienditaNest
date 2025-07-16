@@ -9,10 +9,10 @@ export class ProductosController {
 
   @Post()
   create(@Body() createProductoDto: CreateProductoDto) {
-    return this.productosService.create(createProductoDto);
+    return this.productosService.createProducto(createProductoDto);
   }
 
-  @Get()
+  @Get('all')
   findAll() {
     return this.productosService.findAll();
   }
@@ -24,11 +24,11 @@ export class ProductosController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateProductoDto: UpdateProductoDto) {
-    return this.productosService.update(+id, updateProductoDto);
+    return this.productosService.updateProducto(+id, updateProductoDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.productosService.remove(+id);
+    return this.productosService.removeProducto(+id);
   }
 }

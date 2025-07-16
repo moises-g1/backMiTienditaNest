@@ -37,7 +37,9 @@ export class UsuariosService {
 
     async findAll() {
     try {
-      return await this.usuarioRepo.find();
+      const usuarios = await this.usuarioRepo.find();
+      // Ocultar el campo password en la respuesta
+      return usuarios.map(({ password, ...rest }) => rest);
     } catch (error) {
       throw new InternalServerErrorException('Error al obtener los usuarios');
     }
@@ -50,7 +52,9 @@ export class UsuariosService {
       if (!usuario) {
         throw new NotFoundException(`usuario con el id: ${id} no encontrado`);
       }
-      return usuario;
+      // Ocultar el campo password en la respuesta
+      const { password, ...rest } = usuario;
+      return rest;
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -75,7 +79,10 @@ export class UsuariosService {
     }
 
     const updateUsuario = this.usuarioRepo.merge(usuario, updateUsuarioDto);
-    return await this.usuarioRepo.save(updateUsuario);
+    const savedUsuario = await this.usuarioRepo.save(updateUsuario);
+    // Ocultar el campo password en la respuesta
+    const { password, ...rest } = savedUsuario;
+    return rest;
   } catch (error) {
     if (error instanceof NotFoundException) {
       throw error;

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CategoriasModule } from './categorias/categorias.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { DetallesVentasModule } from './detalles_ventas/detalles_ventas.module';
 import { DetallesComprasModule } from './detalles_compras/detalles_compras.module';
@@ -25,6 +26,7 @@ import { ComprasModule } from './compras/compras.module';
     DetallesComprasModule,
     ProveedoresModule,
     ComprasModule,
+    CategoriasModule,
   ],
   controllers: [AppController],
   providers: [AppService],

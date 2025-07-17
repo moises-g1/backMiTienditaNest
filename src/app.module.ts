@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CategoriasModule } from './categorias/categorias.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
+import { ProductosModule } from './productos/productos.module';
 import { DetallesVentasModule } from './detalles_ventas/detalles_ventas.module';
 import { DetallesComprasModule } from './detalles_compras/detalles_compras.module';
 import { ProveedoresModule } from './proveedores/proveedores.module';
@@ -29,6 +30,7 @@ import { ComprasModule } from './compras/compras.module';
     CategoriasModule,
     CategoriasModule,
     UsuariosModule,
+    ProductosModule,
   ],
   controllers: [AppController],
   providers: [AppService],

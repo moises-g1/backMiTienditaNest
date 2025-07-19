@@ -13,13 +13,13 @@ import { ComprasModule } from './compras/compras.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'postgres',
+      type: 'mysql',
       host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'blanco03',
-      database: 'tienda_db',
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      port: 3306,
+      username: 'root',
+      password: '',
+      database: 'tiendita_db',
+      autoLoadEntities:true,
       synchronize: true,
     }),
     UsuariosModule,

@@ -1,5 +1,6 @@
 import { RolUsuario } from "src/common/enums/usuario_rol.enum";
-import {Column, CreateDateColumn, Entity, PrimaryGeneratedColumn} from "typeorm";
+import { Venta } from "src/ventas/entities/venta.entity";
+import {Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 
 @Entity()
 export class Usuario {
@@ -28,4 +29,8 @@ export class Usuario {
   
     @CreateDateColumn()
     createdAt:Date
+
+    @OneToMany(() => Venta, (venta) => venta.usuario)
+    ventas: Venta[];
+
 }

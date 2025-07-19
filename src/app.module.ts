@@ -9,6 +9,7 @@ import { DetallesVentasModule } from './detalles_ventas/detalles_ventas.module';
 import { DetallesComprasModule } from './detalles_compras/detalles_compras.module';
 import { ProveedoresModule } from './proveedores/proveedores.module';
 import { ComprasModule } from './compras/compras.module';
+import { VentasModule } from './ventas/ventas.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { ComprasModule } from './compras/compras.module';
     CategoriasModule,
     UsuariosModule,
     ProductosModule,
+    VentasModule,
   ],
   controllers: [AppController],
   providers: [AppService],

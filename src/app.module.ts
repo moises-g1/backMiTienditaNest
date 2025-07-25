@@ -20,7 +20,7 @@ import { VentasModule } from './ventas/ventas.module';
       username: 'root',
       password: '',
       database: 'tiendita_db',
-      autoLoadEntities:true,
+      autoLoadEntities: true,
       synchronize: true,
     }),
     UsuariosModule,

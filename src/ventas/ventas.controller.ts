@@ -9,10 +9,10 @@ export class VentasController {
 
   @Post()
   create(@Body() createVentaDto: CreateVentaDto) {
-    return this.ventasService.create(createVentaDto);
+    return this.ventasService.createVenta(createVentaDto);
   }
 
-  @Get()
+  @Get('all')
   findAll() {
     return this.ventasService.findAll();
   }
@@ -24,11 +24,11 @@ export class VentasController {
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateVentaDto: UpdateVentaDto) {
-    return this.ventasService.update(+id, updateVentaDto);
+    return this.ventasService.updateVenta(+id, updateVentaDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.ventasService.remove(+id);
+    return this.ventasService.removeVenta(+id);
   }
 }

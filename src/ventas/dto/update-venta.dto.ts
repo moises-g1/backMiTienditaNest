@@ -1,18 +1,18 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional } from 'class-validator';
 import { EstadoVenta } from 'src/common/enums/estado-venta.enum';
 import { MetodoPago } from 'src/common/enums/metodo-pago.enum';
 
 export class UpdateVentaDto {
+        @IsOptional()
         @IsNumber()
-        @IsNotEmpty()
         numero_venta: number;
     
+        @IsOptional()
         @IsNumber()
-        @IsNotEmpty()
         total: number;
     
+        @IsOptional()
         @IsNumber()
-        @IsNotEmpty()
         descuento: number;
     
         @IsEnum(MetodoPago, { message: 'Método de pago inválido' })
@@ -24,6 +24,6 @@ export class UpdateVentaDto {
         estado?: EstadoVenta;
     
         @IsNumber()
-        @IsNotEmpty()
+        @IsOptional()
         usuarioId: number; 
 }

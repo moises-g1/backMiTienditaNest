@@ -34,7 +34,6 @@ export class UsuariosService {
 }
 
 
-
     async findAll() {
     try {
       const usuarios = await this.usuarioRepo.find();
@@ -91,8 +90,6 @@ export class UsuariosService {
   }
 }
 
-
-  
 
   async removeUsuario(id: number) {
     try {

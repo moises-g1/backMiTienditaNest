@@ -38,28 +38,33 @@ export class ProductosService {
 
   
       async findAll() {
-      try {
-        return await this.productoRepo.find();
-      } catch (error) {
-        throw new InternalServerErrorException('Error al obtener los productos');
-      }
-    }
+  try {
+    return await this.productoRepo.find({ 
+      relations: ['categoria'] 
+    });
+  } catch (error) {
+    throw new InternalServerErrorException('Error al obtener los productos');
+  }
+}
   
   
     async findOne(id: number) {
-      try {
-        const producto = await this.productoRepo.findOneBy({ id });
-        if (!producto) {
-          throw new NotFoundException(`producto con el id: ${id} no encontrado`);
-        }
-        return producto;
-      } catch (error) {
-        if (error instanceof NotFoundException) {
-          throw error;
-        }
-        throw new InternalServerErrorException('Error al buscar el producto');
-      }
+  try {
+    const producto = await this.productoRepo.findOne({
+      where: { id },
+      relations: ['categoria']
+    });
+    if (!producto) {
+      throw new NotFoundException(`producto con el id: ${id} no encontrado`);
     }
+    return producto;
+  } catch (error) {
+    if (error instanceof NotFoundException) {
+      throw error;
+    }
+    throw new InternalServerErrorException('Error al buscar el producto');
+  }
+}
   
   
    async updateProducto(id: number, updateProductoDto: UpdateProductoDto) {

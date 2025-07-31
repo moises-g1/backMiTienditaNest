@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Producto } from "src/productos/entities/producto.entity";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Categoria {
@@ -12,4 +13,7 @@ export class Categoria {
 
     @CreateDateColumn()
     createdAt:Date
+
+    @OneToMany(() => Producto, (producto) => producto.categoria)
+    productos: Producto[];
 }

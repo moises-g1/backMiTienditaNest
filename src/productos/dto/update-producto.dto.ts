@@ -25,4 +25,8 @@ export class UpdateProductoDto {
             @IsOptional()
             @IsNumber()
             stock_actual:number 
+
+            @IsOptional()
+            @IsNumber()
+            categoriaId?: number;
 }

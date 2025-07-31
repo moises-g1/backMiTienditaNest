@@ -1,26 +1,32 @@
 import { Injectable } from '@nestjs/common';
 import { CreateDetallesCompraDto } from './dto/create-detalles_compra.dto';
-import { UpdateDetallesCompraDto } from './dto/update-detalles_compra.dto';
-
+import { DetalleCompra } from './entities/detalles_compra.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 @Injectable()
 export class DetallesComprasService {
-  create(createDetallesCompraDto: CreateDetallesCompraDto) {
-    return 'This action adds a new detallesCompra';
+  constructor(
+    @InjectRepository(DetalleCompra)
+    private detalleRepo: Repository<DetalleCompra>,
+  ) {}
+
+  create(dto: CreateDetallesCompraDto) {
+    const detalle = this.detalleRepo.create(dto);
+    return this.detalleRepo.save(detalle);
   }
 
   findAll() {
-    return `This action returns all detallesCompras`;
+    return this.detalleRepo.find({ relations: ['compra', 'producto'] });
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} detallesCompra`;
-  }
-
-  update(id: number, updateDetallesCompraDto: UpdateDetallesCompraDto) {
-    return `This action updates a #${id} detallesCompra`;
+    return this.detalleRepo.findOne({
+      where: { id },
+      relations: ['compra', 'producto'],
+    });
   }
 
   remove(id: number) {
-    return `This action removes a #${id} detallesCompra`;
+    return this.detalleRepo.delete(id);
   }
 }

@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { ProveedoresService } from './proveedores.service';
 import { CreateProveedoreDto } from './dto/create-proveedore.dto';
 import { UpdateProveedoreDto } from './dto/update-proveedore.dto';
@@ -8,27 +18,94 @@ export class ProveedoresController {
   constructor(private readonly proveedoresService: ProveedoresService) {}
 
   @Post()
-  create(@Body() createProveedoreDto: CreateProveedoreDto) {
-    return this.proveedoresService.create(createProveedoreDto);
+  async create(@Body() createProveedoreDto: CreateProveedoreDto) {
+    try {
+      const proveedor =
+        await this.proveedoresService.create(createProveedoreDto);
+      return {
+        message: 'Proveedor creado correctamente',
+        data: proveedor,
+      };
+    } catch (error) {
+      throw new HttpException(
+        'Error al crear el proveedor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @Get()
-  findAll() {
-    return this.proveedoresService.findAll();
+  async findAll() {
+    try {
+      const proveedores = await this.proveedoresService.findAll();
+      return {
+        message: 'Listado de proveedores',
+        data: proveedores,
+      };
+    } catch (error) {
+      throw new HttpException(
+        'Error al obtener los proveedores',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.proveedoresService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    try {
+      const proveedor = await this.proveedoresService.findOne(+id);
+      if (!proveedor) {
+        throw new HttpException(
+          'Proveedor no encontrado',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      return {
+        message: 'Proveedor encontrado',
+        data: proveedor,
+      };
+    } catch (error) {
+      throw new HttpException(
+        error.message || 'Error al buscar el proveedor',
+        error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProveedoreDto: UpdateProveedoreDto) {
-    return this.proveedoresService.update(+id, updateProveedoreDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateProveedoreDto: UpdateProveedoreDto,
+  ) {
+    try {
+      const updated = await this.proveedoresService.update(
+        +id,
+        updateProveedoreDto,
+      );
+      return {
+        message: 'Proveedor actualizado correctamente',
+        data: updated,
+      };
+    } catch (error) {
+      throw new HttpException(
+        'Error al actualizar el proveedor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.proveedoresService.remove(+id);
+  async remove(@Param('id') id: string) {
+    try {
+      await this.proveedoresService.remove(+id);
+      return {
+        message: 'Proveedor eliminado correctamente',
+      };
+    } catch (error) {
+      throw new HttpException(
+        'Error al eliminar el proveedor',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 }

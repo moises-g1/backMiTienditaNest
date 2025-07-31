@@ -5,9 +5,11 @@ import {
   CreateDateColumn,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { Usuario } from '../../usuarios/entities/usuario.entity';
 import { Proveedor } from 'src/proveedores/entities/proveedore.entity';
+import { DetalleCompra } from 'src/detalles_compras/entities/detalles_compra.entity';
 
 export enum EstadoCompra {
   PENDIENTE = 'pendiente',
@@ -42,6 +44,10 @@ export class Compra {
   @ManyToOne(() => Usuario)
   @JoinColumn({ name: 'usuario_id' })
   usuario: Usuario;
+  @OneToMany(() => DetalleCompra, (detalle) => detalle.compra, {
+    cascade: true,
+  })
+  detalles: DetalleCompra[];
 
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;

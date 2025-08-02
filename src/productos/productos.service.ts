@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Producto } from './entities/producto.entity';
 import { Repository } from 'typeorm';
@@ -19,6 +19,13 @@ export class ProductosService {
   try {
     const { categoriaId, ...resto } = createProductoDto;
 
+    //para valida el precio
+    if (resto.precio_venta <= resto.precio_compra) {
+  throw new BadRequestException(
+    'El precio de venta debe ser mayor que el precio de compra',
+  );
+}
+
     const categoria = await this.categoriaRepo.findOneBy({ id: categoriaId });
     if (!categoria) {
       throw new NotFoundException(`Categoría con el id ${categoriaId} no encontrada`);
@@ -32,7 +39,10 @@ export class ProductosService {
     await this.productoRepo.save(newProducto);
     return newProducto;
   } catch (error) {
-    throw new InternalServerErrorException('Error al crear el producto');
+  if (error instanceof BadRequestException || error instanceof NotFoundException) {
+    throw error; 
+  }
+  throw new InternalServerErrorException('Error al crear el producto');
   }
 }
 

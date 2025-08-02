@@ -17,7 +17,7 @@ export class VentasService {
 
       const newVenta = this.ventaRepo.create({
         ...rest,
-        usuario: { id: usuarioId }, // <-- Aquí se establece la relación
+        usuario: { id: usuarioId }, //relación
       });
 
       await this.ventaRepo.save(newVenta);

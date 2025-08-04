@@ -1,4 +1,4 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Venta } from './entities/venta.entity';
 import { Repository } from 'typeorm';
@@ -25,7 +25,6 @@ export class VentasService {
 async createVenta(createVentaDto: CreateVentaDto) {
   const {
     usuarioId,
-    numero_venta,
     descuento = 0,
     metodo_pago = MetodoPago.EFECTIVO,
     estado = EstadoVenta.COMPLETADA,
@@ -34,7 +33,6 @@ async createVenta(createVentaDto: CreateVentaDto) {
 
   // Crear la venta con total temporal = 0
   const venta = this.ventaRepo.create({
-    numero_venta,
     descuento,
     metodo_pago,
     estado,
@@ -78,7 +76,7 @@ async createVenta(createVentaDto: CreateVentaDto) {
   venta.total = Math.max(totalVenta - descuento, 0);
   await this.ventaRepo.save(venta);
 
-  // 4. Retornar la venta con relaciones
+  // Retornar la venta con relaciones
   return this.ventaRepo.findOne({
     where: { id: venta.id },
     relations: ['usuario', 'detalles', 'detalles.producto'],

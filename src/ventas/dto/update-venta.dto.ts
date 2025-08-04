@@ -3,9 +3,6 @@ import { EstadoVenta } from 'src/common/enums/estado-venta.enum';
 import { MetodoPago } from 'src/common/enums/metodo-pago.enum';
 
 export class UpdateVentaDto {
-        @IsOptional()
-        @IsNumber()
-        numero_venta: number;
     
         @IsOptional()
         @IsNumber()

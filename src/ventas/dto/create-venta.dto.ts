@@ -5,9 +5,6 @@ import { MetodoPago } from 'src/common/enums/metodo-pago.enum';
 import { CreateDetallesVentaDto } from 'src/detalles_ventas/dto/create-detalles_venta.dto';
 
 export class CreateVentaDto {
-    @IsNumber()
-    @IsNotEmpty()
-    numero_venta: number;
 
     @IsNumber()
     @IsNotEmpty()

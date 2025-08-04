@@ -16,8 +16,6 @@ export class Venta {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  numero_venta: number;
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   total: number;
   @Column({ type: 'decimal', precision: 10, scale: 2 })

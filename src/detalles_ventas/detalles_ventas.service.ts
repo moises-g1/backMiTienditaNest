@@ -37,9 +37,9 @@ export class DetallesVentasService {
 
     const detalle = this.detalleRepo.create({
       cantidad: dto.cantidad,
-      precio_unitario: dto.precio_unitario,
+      //precio_unitario: dto.precio_unitario,
       producto: { id: dto.productoId },
-      venta: { id: dto.ventaId },
+      // venta: { id: dto.ventaId },
     });
 
     return this.detalleRepo.save(detalle);

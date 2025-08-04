@@ -1,11 +1,13 @@
 import { EstadoVenta } from 'src/common/enums/estado-venta.enum';
 import { MetodoPago } from 'src/common/enums/metodo-pago.enum';
+import { DetallesVenta } from 'src/detalles_ventas/entities/detalles_venta.entity';
 import { Usuario } from 'src/usuarios/entities/usuario.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -40,5 +42,7 @@ export class Venta {
 
   @ManyToOne(() => Usuario, (usuario) => usuario.ventas)
   usuario: Usuario;
-  detalles: any;
+
+  @OneToMany(() => DetallesVenta, (detalle) => detalle.venta, { cascade: true })
+  detalles: DetallesVenta[];
 }

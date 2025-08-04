@@ -1,31 +1,90 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Venta } from './entities/venta.entity';
 import { Repository } from 'typeorm';
 import { CreateVentaDto } from './dto/create-venta.dto';
 import { UpdateVentaDto } from './dto/update-venta.dto';
+import { DetallesVenta } from 'src/detalles_ventas/entities/detalles_venta.entity';
+import { Producto } from 'src/productos/entities/producto.entity';
+import { MetodoPago } from 'src/common/enums/metodo-pago.enum';
+import { EstadoVenta } from 'src/common/enums/estado-venta.enum';
 
 @Injectable()
 export class VentasService {
   constructor(
     @InjectRepository(Venta)
-    private ventaRepo: Repository<Venta>) { }
+    private ventaRepo: Repository<Venta>,
 
-  async createVenta(createVentaDto: CreateVentaDto) {
-    try {
-      const { usuarioId, ...rest } = createVentaDto;
+    @InjectRepository(DetallesVenta)
+    private detalleRepo: Repository<DetallesVenta>,
 
-      const newVenta = this.ventaRepo.create({
-        ...rest,
-        usuario: { id: usuarioId }, //relación
-      });
+    @InjectRepository(Producto)
+    private productoRepo: Repository<Producto>,) { }
 
-      await this.ventaRepo.save(newVenta);
-      return newVenta;
-    } catch (error) {
-      throw new InternalServerErrorException('Error al crear la venta');
+  // src/ventas/ventas.service.ts
+async createVenta(createVentaDto: CreateVentaDto) {
+  const {
+    usuarioId,
+    numero_venta,
+    descuento = 0,
+    metodo_pago = MetodoPago.EFECTIVO,
+    estado = EstadoVenta.COMPLETADA,
+    detalles,
+  } = createVentaDto;
+
+  // 1. Crear la venta (con total temporal = 0)
+  const venta = this.ventaRepo.create({
+    numero_venta,
+    descuento,
+    metodo_pago,
+    estado,
+    usuario: { id: usuarioId },
+    total: 0,
+  });
+
+  await this.ventaRepo.save(venta);
+
+  let totalVenta = 0;
+
+  // 2. Procesar cada detalle
+  for (const detalle of detalles) {
+    const producto = await this.productoRepo.findOneBy({ id: detalle.productoId });
+
+    if (!producto) {
+      throw new NotFoundException(`Producto con id ${detalle.productoId} no encontrado`);
     }
+
+    if (producto.stock_actual < detalle.cantidad) {
+      throw new BadRequestException(`Stock insuficiente para el producto ${detalle.productoId}`);
+    }
+
+    const subtotal = producto.precio_venta * detalle.cantidad;
+    totalVenta += subtotal;
+
+    producto.stock_actual -= detalle.cantidad;
+    await this.productoRepo.save(producto);
+
+    const nuevoDetalle = this.detalleRepo.create({
+      cantidad: detalle.cantidad,
+      producto: { id: detalle.productoId },
+      venta: { id: venta.id },
+      precio_unitario: producto.precio_venta, 
+    });
+
+    await this.detalleRepo.save(nuevoDetalle);
   }
+
+  // Actualizar total de la venta (aplicando descuento)
+  venta.total = Math.max(totalVenta - descuento, 0);
+  await this.ventaRepo.save(venta);
+
+  // 4. Retornar la venta con relaciones
+  return this.ventaRepo.findOne({
+    where: { id: venta.id },
+    relations: ['usuario', 'detalles', 'detalles.producto'],
+  });
+}
+
 
 
   async findAll() {

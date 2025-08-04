@@ -1,15 +1,17 @@
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsArray, IsEnum, IsNotEmpty, IsNumber, IsOptional, ValidateNested } from 'class-validator';
 import { EstadoVenta } from 'src/common/enums/estado-venta.enum';
 import { MetodoPago } from 'src/common/enums/metodo-pago.enum';
+import { CreateDetallesVentaDto } from 'src/detalles_ventas/dto/create-detalles_venta.dto';
 
 export class CreateVentaDto {
     @IsNumber()
     @IsNotEmpty()
     numero_venta: number;
 
-    @IsNumber()
-    @IsNotEmpty()
-    total: number;
+    // @IsNumber()
+    // @IsNotEmpty()
+    // total: number;
 
     @IsNumber()
     @IsNotEmpty()
@@ -26,4 +28,9 @@ export class CreateVentaDto {
     @IsNumber()
     @IsNotEmpty()
     usuarioId: number; 
+
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => CreateDetallesVentaDto)
+    detalles: CreateDetallesVentaDto[];
 }

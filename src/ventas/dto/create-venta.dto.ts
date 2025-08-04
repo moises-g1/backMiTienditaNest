@@ -9,10 +9,6 @@ export class CreateVentaDto {
     @IsNotEmpty()
     numero_venta: number;
 
-    // @IsNumber()
-    // @IsNotEmpty()
-    // total: number;
-
     @IsNumber()
     @IsNotEmpty()
     descuento: number;

@@ -21,7 +21,7 @@ export class VentasService {
     @InjectRepository(Producto)
     private productoRepo: Repository<Producto>,) { }
 
-  // src/ventas/ventas.service.ts
+
 async createVenta(createVentaDto: CreateVentaDto) {
   const {
     usuarioId,
@@ -32,7 +32,7 @@ async createVenta(createVentaDto: CreateVentaDto) {
     detalles,
   } = createVentaDto;
 
-  // 1. Crear la venta (con total temporal = 0)
+  // Crear la venta con total temporal = 0
   const venta = this.ventaRepo.create({
     numero_venta,
     descuento,
@@ -46,7 +46,7 @@ async createVenta(createVentaDto: CreateVentaDto) {
 
   let totalVenta = 0;
 
-  // 2. Procesar cada detalle
+  // Procesar cada detalle
   for (const detalle of detalles) {
     const producto = await this.productoRepo.findOneBy({ id: detalle.productoId });
 

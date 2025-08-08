@@ -1,4 +1,4 @@
-import {Controller,Get,Post,Body,Patch,Param,Delete,Injectable, ForbiddenException,} from '@nestjs/common';
+import {Controller,Get,Post,Body,Patch,Param,Delete,Injectable, ForbiddenException, BadRequestException,} from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
@@ -9,6 +9,19 @@ import { Headers } from '@nestjs/common';
 @Controller('usuarios')
 export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) {}
+
+ @Post('login')
+async login(@Body() body: { email: string; password: string }) {
+  const { email, password } = body;
+
+  if (!email || !password) {
+    throw new BadRequestException('Email y contraseña son obligatorios');
+  }
+
+  return this.usuariosService.login(email, password);
+}
+
+
 
   @Post()
   create(@Body() createUsuarioDto: CreateUsuarioDto) {

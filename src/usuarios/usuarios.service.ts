@@ -6,14 +6,40 @@ import { CreateUsuarioDto } from './dto/create-usuario.dto';
 import { UpdateUsuarioDto } from './dto/update-usuario.dto';
 import { RolUsuario } from 'src/common/enums/usuario_rol.enum';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 
 @Injectable()
 export class UsuariosService {
  constructor(
     @InjectRepository(Usuario)
-  private usuarioRepo: Repository<Usuario>){ }
+  private usuarioRepo: Repository<Usuario>,
+private jwtService: JwtService,
+){
+ }
+   
 
+  async login(email: string, password: string) {
+    const usuario = await this.usuarioRepo.findOne({ where: { email } });
+    if (!usuario) {
+      throw new NotFoundException('Usuario no encontrado');
+    }
+    const passwordValid = await bcrypt.compare(password, usuario.password);
+    if (!passwordValid) {
+      throw new NotFoundException('Credenciales incorrectas');
+    }
+    const { password: _, ...userWithoutPassword } = usuario;
+
+    // Genera el JWT real
+    const payload = { sub: usuario.id, email: usuario.email, rol: usuario.rol };
+    const token = this.jwtService.sign(payload);
+
+    return {
+      user: userWithoutPassword,
+      token,
+    };
+    
+  }
 
  async createUsuario(createUsuarioDto: CreateUsuarioDto) {
   try {

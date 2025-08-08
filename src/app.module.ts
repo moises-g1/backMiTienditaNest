@@ -6,13 +6,15 @@ import { CategoriasModule } from './categorias/categorias.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { ProductosModule } from './productos/productos.module';
 import { DetallesVentasModule } from './detalles_ventas/detalles_ventas.module';
-import { DetallesComprasModule } from './detalles_compras/detalles_compras.module';
+import { DetalleComprasModule } from './detalles_compras/detalles_compras.module';
 import { ProveedoresModule } from './proveedores/proveedores.module';
 import { ComprasModule } from './compras/compras.module';
 import { VentasModule } from './ventas/ventas.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot(), // Carga las variables de entorno desde .env
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',
@@ -25,7 +27,7 @@ import { VentasModule } from './ventas/ventas.module';
     }),
     UsuariosModule,
     DetallesVentasModule,
-    DetallesComprasModule,
+    DetalleComprasModule,
     ProveedoresModule,
     ComprasModule,
     CategoriasModule,

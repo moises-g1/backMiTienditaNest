@@ -5,7 +5,7 @@ import { Compra } from './entities/compra.entity';
 import { CreateCompraDto } from './dto/create-compra.dto';
 import { UpdateCompraDto } from './dto/update-compra.dto';
 import { Usuario } from 'src/usuarios/entities/usuario.entity';
-import { Proveedor } from 'src/proveedores/entities/proveedore.entity';
+import { Proveedor } from 'src/proveedores/entities/proveedor.entity';
 
 @Injectable()
 export class ComprasService {

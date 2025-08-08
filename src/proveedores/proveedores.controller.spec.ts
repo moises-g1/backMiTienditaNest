@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ProveedoresController } from './proveedores.controller';
 import { ProveedoresService } from './proveedores.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Proveedor } from './entities/proveedore.entity';
+import { Proveedor } from './entities/proveedor.entity';
 
 describe('ProveedoresController', () => {
   let controller: ProveedoresController;

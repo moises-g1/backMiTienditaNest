@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { CreateProveedoreDto } from './dto/create-proveedore.dto';
-import { UpdateProveedoreDto } from './dto/update-proveedore.dto';
+import { CreateProveedorDto } from './dto/create-proveedor.dto';
+import { UpdateProveedorDto } from './dto/update-proveedor.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Proveedor } from './entities/proveedore.entity';
+import { Proveedor } from './entities/proveedor.entity';
 
 @Injectable()
 export class ProveedoresService {
@@ -12,8 +12,8 @@ export class ProveedoresService {
     private readonly proveedorRepository: Repository<Proveedor>,
   ) {}
 
-  async create(createProveedoreDto: CreateProveedoreDto): Promise<Proveedor> {
-    const proveedor = this.proveedorRepository.create(createProveedoreDto);
+  async create(createProveedorDto: CreateProveedorDto): Promise<Proveedor> {
+    const proveedor = this.proveedorRepository.create(createProveedorDto);
     return await this.proveedorRepository.save(proveedor);
   }
 
@@ -25,8 +25,8 @@ export class ProveedoresService {
     return this.proveedorRepository.findOneBy({ id });
   }
 
-  async update(id: number, updateProveedoreDto: UpdateProveedoreDto) {
-    await this.proveedorRepository.update(id, updateProveedoreDto);
+  async update(id: number, updateProveedorDto: UpdateProveedorDto) {
+    await this.proveedorRepository.update(id, updateProveedorDto);
     return this.findOne(id);
   }
 

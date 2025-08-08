@@ -8,7 +8,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Usuario } from '../../usuarios/entities/usuario.entity';
-import { Proveedor } from 'src/proveedores/entities/proveedore.entity';
+import { Proveedor } from 'src/proveedores/entities/proveedor.entity';
 import { DetalleCompra } from 'src/detalles_compras/entities/detalles_compra.entity';
 
 export enum EstadoCompra {

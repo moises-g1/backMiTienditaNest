@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ComprasService } from './compras.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Compra } from './entities/compra.entity';
-import { Proveedor } from 'src/proveedores/entities/proveedore.entity';
+import { Proveedor } from 'src/proveedores/entities/proveedor.entity';
 import { Usuario } from 'src/usuarios/entities/usuario.entity';
 
 describe('ComprasService', () => {

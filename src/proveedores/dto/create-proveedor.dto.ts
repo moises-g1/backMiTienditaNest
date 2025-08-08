@@ -9,7 +9,7 @@ import {
   IsNotEmpty,
 } from 'class-validator';
 
-export class CreateProveedoreDto {
+export class CreateProveedorDto {
   @IsString()
   @IsNotEmpty()
   nombre: string;

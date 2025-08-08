@@ -21,4 +21,3 @@ describe('CategoriasService', () => {
     expect(service).toBeDefined();
   });
 });
-

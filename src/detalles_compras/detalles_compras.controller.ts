@@ -1,10 +1,10 @@
 import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
-import { DetallesComprasService } from './detalles_compras.service';
+import { DetalleComprasService } from './detalles_compras.service';
 import { CreateDetallesCompraDto } from './dto/create-detalles_compra.dto';
 
 @Controller('detalle-compras')
 export class DetalleComprasController {
-  constructor(private readonly service: DetallesComprasService) {}
+  constructor(private readonly service: DetalleComprasService) {}
 
   @Post()
   create(@Body() dto: CreateDetallesCompraDto) {

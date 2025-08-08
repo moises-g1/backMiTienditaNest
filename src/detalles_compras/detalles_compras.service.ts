@@ -4,7 +4,7 @@ import { DetalleCompra } from './entities/detalles_compra.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 @Injectable()
-export class DetallesComprasService {
+export class DetalleComprasService {
   constructor(
     @InjectRepository(DetalleCompra)
     private detalleRepo: Repository<DetalleCompra>,

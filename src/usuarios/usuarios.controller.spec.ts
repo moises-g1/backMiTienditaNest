@@ -3,6 +3,7 @@ import { UsuariosController } from './usuarios.controller';
 import { UsuariosService } from './usuarios.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Usuario } from './entities/usuario.entity';
+import { JwtService } from '@nestjs/jwt';
 
 describe('UsuariosController', () => {
   let controller: UsuariosController;
@@ -13,6 +14,10 @@ describe('UsuariosController', () => {
       providers: [
         UsuariosService,
         { provide: getRepositoryToken(Usuario), useValue: {} },
+        {
+          provide: JwtService,
+          useValue: { sign: jest.fn(), verify: jest.fn() },
+        },
       ],
     }).compile();
 

@@ -25,6 +25,8 @@ export class ProveedoresService {
     return this.proveedorRepository.findOneBy({ id });
   }
 
+  
+
   async update(id: number, updateProveedorDto: UpdateProveedorDto) {
     await this.proveedorRepository.update(id, updateProveedorDto);
     return this.findOne(id);
@@ -33,4 +35,6 @@ export class ProveedoresService {
   remove(id: number) {
     return this.proveedorRepository.delete(id);
   }
+
+  
 }

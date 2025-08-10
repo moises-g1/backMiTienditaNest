@@ -15,8 +15,12 @@ export class UsuariosService {
     @InjectRepository(Usuario)
   private usuarioRepo: Repository<Usuario>,
 private jwtService: JwtService,
-){
- }
+){}
+
+ async findByEmail(email: string): Promise<Usuario | undefined> {
+    const usuario = await this.usuarioRepo.findOne({ where: { email } });
+    return usuario ?? undefined;
+  }
    
 
   async login(email: string, password: string) {

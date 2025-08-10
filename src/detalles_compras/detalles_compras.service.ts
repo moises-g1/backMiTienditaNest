@@ -10,8 +10,15 @@ export class DetalleComprasService {
     private detalleRepo: Repository<DetalleCompra>,
   ) {}
 
-  create(dto: CreateDetallesCompraDto) {
-    const detalle = this.detalleRepo.create(dto);
+  async create(dto: CreateDetallesCompraDto) {
+    // Transformamos los ids planos a objetos para TypeORM
+    const detalle = this.detalleRepo.create({
+      cantidad: dto.cantidad,
+      precio_unitario: dto.precioUnitario,
+      subtotal: dto.subtotal,
+      compra: { id: dto.compraId },
+      producto: { id: dto.productoId },
+    });
     return this.detalleRepo.save(detalle);
   }
 

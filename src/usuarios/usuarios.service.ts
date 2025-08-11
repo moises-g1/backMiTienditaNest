@@ -122,19 +122,24 @@ private jwtService: JwtService,
 
 
   async removeUsuario(id: number) {
-    try {
-      const usuario = await this.usuarioRepo.findOneBy({id});
-      if(!usuario){
-        throw new NotFoundException(`usuario con el id: ${id} no encontrado`);
-      }
-      await this.usuarioRepo.remove(usuario);
-      return {message:`usuario con el id: ${id} se ha eliminado`};
-
-    } catch (error){
-      if (error instanceof NotFoundException) {
-        throw error;
-      }
-      throw new InternalServerErrorException('Error al eliminar el usuario');
+  try {
+    const usuario = await this.usuarioRepo.findOneBy({ id });
+    if (!usuario) {
+      throw new NotFoundException(`usuario con el id: ${id} no encontrado`);
     }
+
+    await this.usuarioRepo.remove(usuario);
+
+    // Respuesta clara y simple para evitar problemas en el cliente
+    return { message: `usuario con el id: ${id} eliminado correctamente` };
+  } catch (error) {
+    if (error instanceof NotFoundException) {
+      throw error;
+    }
+
+    console.error('Error al eliminar usuario:', error); // Log para debug
+    throw new InternalServerErrorException('Error interno al eliminar el usuario');
   }
+}
+
 }

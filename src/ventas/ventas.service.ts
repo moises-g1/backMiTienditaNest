@@ -36,148 +36,71 @@ export class VentasService {
       detalles,
     } = createVentaDto;
 
-<<<<<<< HEAD
-    // Crear la venta con total temporal = 0
-    const venta = this.ventaRepo.create({
-      descuento,
-      metodo_pago,
-      estado,
-      usuario: { id: usuarioId },
-      total: 0,
-    });
-
-    await this.ventaRepo.save(venta);
-
-    let totalVenta = 0;
-
-    // Procesar cada detalle
-    for (const detalle of detalles) {
-      const producto = await this.productoRepo.findOneBy({
-        id: detalle.productoId,
+    // Usar una transacción para garantizar que todo se complete o se revierta.
+    return await this.ventaRepo.manager.transaction(async (manager) => {
+      // 1. Crear la venta con total temporal = 0
+      const venta = manager.create(Venta, {
+        descuento,
+        metodo_pago,
+        estado,
+        usuario: { id: usuarioId },
+        total: 0,
       });
 
-      if (!producto) {
-        throw new NotFoundException(
-          `Producto con id ${detalle.productoId} no encontrado`,
-        );
+      await manager.save(venta);
+
+      let totalVenta = 0;
+      const detallesVentaEntities: DetallesVenta[] = [];
+
+      // 2. Procesar cada detalle
+      for (const detalle of detalles) {
+        const producto = await manager.findOne(Producto, {
+          where: { id: detalle.productoId }
+        });
+
+        if (!producto) {
+          throw new NotFoundException(`Producto con id ${detalle.productoId} no encontrado`);
+        }
+
+        if (producto.stock_actual < detalle.cantidad) {
+          throw new BadRequestException(`Stock insuficiente para el producto ${producto.nombre}`);
+        }
+
+        const subtotal = producto.precio_venta * detalle.cantidad;
+        totalVenta += subtotal;
+
+        producto.stock_actual -= detalle.cantidad;
+        await manager.save(producto);
+
+        const nuevoDetalle = manager.create(DetallesVenta, {
+          cantidad: detalle.cantidad,
+          producto: { id: detalle.productoId },
+          venta: { id: venta.id },
+          precio_unitario: producto.precio_venta,
+        });
+
+        detallesVentaEntities.push(nuevoDetalle);
       }
 
-      if (producto.stock_actual < detalle.cantidad) {
-        throw new BadRequestException(
-          `Stock insuficiente para el producto ${detalle.productoId}`,
-        );
-      }
+      await manager.save(detallesVentaEntities);
 
-      const subtotal = producto.precio_venta * detalle.cantidad;
-      totalVenta += subtotal;
+      // 3. Actualizar total de la venta (aplicando descuento)
+      venta.total = Math.max(totalVenta - descuento, 0);
+      await manager.save(venta);
 
-      producto.stock_actual -= detalle.cantidad;
-      await this.productoRepo.save(producto);
-
-      const nuevoDetalle = this.detalleRepo.create({
-        cantidad: detalle.cantidad,
-        producto: { id: detalle.productoId },
-        venta: { id: venta.id },
-        precio_unitario: producto.precio_venta,
+      // 4. Retornar la venta con relaciones
+      return manager.findOne(Venta, {
+        where: { id: venta.id },
+        relations: ['usuario', 'detalles', 'detalles.producto'],
       });
-
-      await this.detalleRepo.save(nuevoDetalle);
-    }
-
-    // Actualizar total de la venta (aplicando descuento)
-    venta.total = Math.max(totalVenta - descuento, 0);
-    await this.ventaRepo.save(venta);
-
-    // Retornar la venta con relaciones
-    return this.ventaRepo.findOne({
-      where: { id: venta.id },
-      relations: ['usuario', 'detalles', 'detalles.producto'],
     });
   }
 
   async findAll() {
     try {
       return await this.ventaRepo.find({
-        relations: ['usuario'], // Carga la relación con usuario
-=======
-async createVenta(createVentaDto: CreateVentaDto) {
-  const {
-    usuarioId,
-    descuento = 0,
-    metodo_pago = MetodoPago.EFECTIVO,
-    estado = EstadoVenta.COMPLETADA,
-    detalles,
-  } = createVentaDto;
-
-   // Usar una transacción para garantizar que todo se complete o se revierta.
-  return await this.ventaRepo.manager.transaction(async (manager) => {
-
-    // 1. Crear la venta con total temporal = 0
-    const venta = manager.create(Venta, {
-      descuento,
-      metodo_pago,
-      estado,
-      usuario: { id: usuarioId },
-      total: 0,
-    });
-
-    await manager.save(venta);
-
-    let totalVenta = 0;
-    const detallesVentaEntities: DetallesVenta[] = []; // 👈 Tipo explícito
-
-    // 2. Procesar cada detalle
-    for (const detalle of detalles) {
-      const producto = await manager.findOne(Producto, {
-        where: { id: detalle.productoId }
-      });
-
-      if (!producto) {
-        throw new NotFoundException(`Producto con id ${detalle.productoId} no encontrado`);
-      }
-
-      if (producto.stock_actual < detalle.cantidad) {
-        throw new BadRequestException(`Stock insuficiente para el producto ${producto.nombre}`);
-      }
-
-      const subtotal = producto.precio_venta * detalle.cantidad;
-      totalVenta += subtotal;
-
-      producto.stock_actual -= detalle.cantidad;
-      await manager.save(producto);
-
-      const nuevoDetalle = manager.create(DetallesVenta, {
-        cantidad: detalle.cantidad,
-        producto: { id: detalle.productoId },
-        venta: { id: venta.id }, // ESTO ES CLAVE
-        precio_unitario: producto.precio_venta, 
-      });
-
-      detallesVentaEntities.push(nuevoDetalle);
-    }
-
-    await manager.save(detallesVentaEntities);
-
-    // 3. Actualizar total de la venta (aplicando descuento)
-    venta.total = Math.max(totalVenta - descuento, 0);
-    await manager.save(venta);
-
-    // 4. Retornar la venta con relaciones
-    return manager.findOne(Venta, {
-      where: { id: venta.id },
-      relations: ['usuario', 'detalles', 'detalles.producto'],
-    });
-  });
-}
-
-
-
-  async findAll() {
-    try {
-      return await this.ventaRepo.find({
-        relations: ['usuario', 'detalles', 'detalles.producto'], // traer usuario, detalles y productos en detalles
-        order: { createdAt: 'DESC' }, // opcional, ordenar por fecha
->>>>>>> aaf5165ed75bfdca73d65526775e36059574d464
+        relations: ['usuario', 'detalles', 'detalles.producto'],
+        order: { createdAt: 'DESC' },
       });
     } catch (error) {
       throw new InternalServerErrorException('Error al obtener ventas');
@@ -185,11 +108,14 @@ async createVenta(createVentaDto: CreateVentaDto) {
   }
 
   async findOne(id: number) {
-<<<<<<< HEAD
     try {
       const venta = await this.ventaRepo.findOne({
         where: { id },
-        relations: ['usuario'], // Carga la relación con usuario
+        relations: [
+          'usuario',
+          'detalles',
+          'detalles.producto'
+        ]
       });
       if (!venta) {
         throw new NotFoundException(`venta con el id: ${id} no encontrada`);
@@ -200,38 +126,14 @@ async createVenta(createVentaDto: CreateVentaDto) {
         throw error;
       }
       throw new InternalServerErrorException('Error al buscar la venta');
-=======
-  try {
-    const venta = await this.ventaRepo.findOne({
-      where: { id },
-      relations: [
-        'usuario',
-        'detalles',
-        'detalles.producto' // 👈 Esto es clave para traer los nombres
-      ]
-    });
-
-    if (!venta) {
-      throw new NotFoundException(`venta con el id: ${id} no encontrada`);
->>>>>>> aaf5165ed75bfdca73d65526775e36059574d464
     }
-
-    return venta;
-  } catch (error) {
-    if (error instanceof NotFoundException) {
-      throw error;
-    }
-    throw new InternalServerErrorException('Error al buscar la venta');
   }
-}
-
-  
 
   async updateVenta(id: number, UpdateVentaDto: UpdateVentaDto) {
     try {
       const venta = await this.ventaRepo.findOneBy({ id });
       if (!venta) {
-        throw new NotFoundException(`producto con el id: ${id} no encontrado`);
+        throw new NotFoundException(`venta con el id: ${id} no encontrada`);
       }
       const updateVenta = this.ventaRepo.merge(venta, UpdateVentaDto);
       return await this.ventaRepo.save(updateVenta);

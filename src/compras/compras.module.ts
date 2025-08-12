@@ -3,7 +3,7 @@ import { ComprasService } from './compras.service';
 import { ComprasController } from './compras.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Compra } from './entities/compra.entity';
-import { Proveedor} from '../proveedores/entities/proveedor.entity';
+import { Proveedor } from '../proveedores/entities/proveedor.entity';
 import { Usuario } from '../usuarios/entities/usuario.entity';
 
 @Module({

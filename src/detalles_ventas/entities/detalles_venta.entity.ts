@@ -13,7 +13,6 @@ export class DetallesVenta {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   @ManyToOne(() => Venta, (venta) => venta.detalles, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'venta_id' })
   venta: Venta;

@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Usuario } from './entities/usuario.entity';
 import { Repository } from 'typeorm';
@@ -8,20 +12,18 @@ import { RolUsuario } from 'src/common/enums/usuario_rol.enum';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 
-
 @Injectable()
 export class UsuariosService {
- constructor(
+  constructor(
     @InjectRepository(Usuario)
-  private usuarioRepo: Repository<Usuario>,
-private jwtService: JwtService,
-){}
+    private usuarioRepo: Repository<Usuario>,
+    private jwtService: JwtService,
+  ) {}
 
- async findByEmail(email: string): Promise<Usuario | undefined> {
+  async findByEmail(email: string): Promise<Usuario | undefined> {
     const usuario = await this.usuarioRepo.findOne({ where: { email } });
     return usuario ?? undefined;
   }
-   
 
   async login(email: string, password: string) {
     const usuario = await this.usuarioRepo.findOne({ where: { email } });
@@ -42,29 +44,30 @@ private jwtService: JwtService,
       user: userWithoutPassword,
       token,
     };
-    
   }
 
- async createUsuario(createUsuarioDto: CreateUsuarioDto) {
-  try {
-    if (!createUsuarioDto.rol) {
-      createUsuarioDto.rol = RolUsuario.EMPLEADO;
+  async createUsuario(createUsuarioDto: CreateUsuarioDto) {
+    try {
+      if (!createUsuarioDto.rol) {
+        createUsuarioDto.rol = RolUsuario.EMPLEADO;
+      }
+
+      // Encriptar la contraseña antes de guardar
+      const salt = await bcrypt.genSalt(); // o bcrypt.genSalt(10)
+      createUsuarioDto.password = await bcrypt.hash(
+        createUsuarioDto.password,
+        salt,
+      );
+
+      const newUsuario = this.usuarioRepo.create(createUsuarioDto);
+      await this.usuarioRepo.save(newUsuario);
+      return newUsuario;
+    } catch (error) {
+      throw new InternalServerErrorException('Error al crear el usuario');
     }
-
-    // Encriptar la contraseña antes de guardar
-    const salt = await bcrypt.genSalt(); // o bcrypt.genSalt(10)
-    createUsuarioDto.password = await bcrypt.hash(createUsuarioDto.password, salt);
-
-    const newUsuario = this.usuarioRepo.create(createUsuarioDto);
-    await this.usuarioRepo.save(newUsuario);
-    return newUsuario;
-  } catch (error) {
-    throw new InternalServerErrorException('Error al crear el usuario');
   }
-}
 
-
-    async findAll() {
+  async findAll() {
     try {
       const usuarios = await this.usuarioRepo.find();
       // Ocultar el campo password en la respuesta
@@ -73,7 +76,6 @@ private jwtService: JwtService,
       throw new InternalServerErrorException('Error al obtener los usuarios');
     }
   }
-
 
   async findOne(id: number) {
     try {
@@ -92,45 +94,44 @@ private jwtService: JwtService,
     }
   }
 
+  async updateUsuario(id: number, updateUsuarioDto: UpdateUsuarioDto) {
+    try {
+      const usuario = await this.usuarioRepo.findOneBy({ id });
+      if (!usuario) {
+        throw new NotFoundException(`usuario con el id: ${id} no encontrado`);
+      }
 
+      // Si el DTO tiene una nueva contraseña, se encripta
+      if (updateUsuarioDto.password) {
+        const salt = await bcrypt.genSalt();
+        updateUsuarioDto.password = await bcrypt.hash(
+          updateUsuarioDto.password,
+          salt,
+        );
+      }
 
- async updateUsuario(id: number, updateUsuarioDto: UpdateUsuarioDto) {
-  try {
-    const usuario = await this.usuarioRepo.findOneBy({ id });
-    if (!usuario) {
-      throw new NotFoundException(`usuario con el id: ${id} no encontrado`);
+      const updateUsuario = this.usuarioRepo.merge(usuario, updateUsuarioDto);
+      const savedUsuario = await this.usuarioRepo.save(updateUsuario);
+      // Ocultar el campo password en la respuesta
+      const { password, ...rest } = savedUsuario;
+      return rest;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Error al actualizar el usuario');
     }
-
-    // Si el DTO tiene una nueva contraseña, se encripta
-    if (updateUsuarioDto.password) {
-      const salt = await bcrypt.genSalt();
-      updateUsuarioDto.password = await bcrypt.hash(updateUsuarioDto.password, salt);
-    }
-
-    const updateUsuario = this.usuarioRepo.merge(usuario, updateUsuarioDto);
-    const savedUsuario = await this.usuarioRepo.save(updateUsuario);
-    // Ocultar el campo password en la respuesta
-    const { password, ...rest } = savedUsuario;
-    return rest;
-  } catch (error) {
-    if (error instanceof NotFoundException) {
-      throw error;
-    }
-    throw new InternalServerErrorException('Error al actualizar el usuario');
   }
-}
-
 
   async removeUsuario(id: number) {
     try {
-      const usuario = await this.usuarioRepo.findOneBy({id});
-      if(!usuario){
+      const usuario = await this.usuarioRepo.findOneBy({ id });
+      if (!usuario) {
         throw new NotFoundException(`usuario con el id: ${id} no encontrado`);
       }
       await this.usuarioRepo.remove(usuario);
-      return {message:`usuario con el id: ${id} se ha eliminado`};
-
-    } catch (error){
+      return { message: `usuario con el id: ${id} se ha eliminado` };
+    } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
       }

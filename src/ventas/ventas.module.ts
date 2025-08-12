@@ -7,7 +7,7 @@ import { DetallesVenta } from 'src/detalles_ventas/entities/detalles_venta.entit
 import { Producto } from 'src/productos/entities/producto.entity';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([Venta, DetallesVenta, Producto])],
+  imports: [TypeOrmModule.forFeature([Venta, DetallesVenta, Producto])],
   controllers: [VentasController],
   providers: [VentasService],
 })

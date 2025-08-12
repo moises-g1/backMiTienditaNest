@@ -1,6 +1,5 @@
 import { IsNumber, IsOptional, IsPositive } from 'class-validator';
 export class CreateDetallesVentaDto {
-
   @IsNumber()
   @IsPositive()
   productoId: number;
@@ -8,5 +7,4 @@ export class CreateDetallesVentaDto {
   @IsNumber()
   @IsPositive()
   cantidad: number;
-
 }

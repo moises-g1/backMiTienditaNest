@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   NotFoundException,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ProveedoresService } from './proveedores.service';
 import { CreateProveedorDto } from './dto/create-proveedor.dto';
@@ -26,9 +27,14 @@ export class ProveedoresController {
     return this.proveedoresService.findAll();
   }
 
+  @Get('all')
+  findAllAlias() {
+    return this.proveedoresService.findAll();
+  }
+
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    const proveedor = await this.proveedoresService.findOne(+id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const proveedor = await this.proveedoresService.findOne(id);
     if (!proveedor) {
       throw new NotFoundException(`Proveedor con id ${id} no encontrado`);
     }
@@ -37,14 +43,14 @@ export class ProveedoresController {
 
   @Patch(':id')
   update(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
     @Body() updateProveedorDto: UpdateProveedorDto,
   ) {
-    return this.proveedoresService.update(+id, updateProveedorDto);
+    return this.proveedoresService.update(id, updateProveedorDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.proveedoresService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.proveedoresService.remove(id);
   }
 }

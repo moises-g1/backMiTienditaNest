@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { VentasService } from './ventas.service';
 import { CreateVentaDto } from './dto/create-venta.dto';
 import { UpdateVentaDto } from './dto/update-venta.dto';
@@ -10,6 +18,11 @@ export class VentasController {
   @Post()
   create(@Body() createVentaDto: CreateVentaDto) {
     return this.ventasService.createVenta(createVentaDto);
+  }
+
+  @Post('calcular-descuento')
+  calcularDescuento(@Body('total') total: number) {
+    return this.ventasService.calcularDescuento(total);
   }
 
   @Get('all')

@@ -1,11 +1,11 @@
-import { Categoria } from "src/categorias/entities/categoria.entity";
+import { Categoria } from 'src/categorias/entities/categoria.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
-} from "typeorm";
+} from 'typeorm';
 
 @Entity()
 export class Producto {

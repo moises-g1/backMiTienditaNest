@@ -41,6 +41,6 @@ export class Venta {
   @ManyToOne(() => Usuario, (usuario) => usuario.ventas)
   usuario: Usuario;
 
-  @OneToMany(() => DetallesVenta, (detalle) => detalle.venta, { cascade: true })
+  @OneToMany(() => DetallesVenta, detalle => detalle.venta, { eager: true })
   detalles: DetallesVenta[];
 }

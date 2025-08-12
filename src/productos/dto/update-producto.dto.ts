@@ -6,6 +6,7 @@ export class UpdateProductoDto {
   @IsString()
   nombre: string;
 
+<<<<<<< HEAD
   @IsOptional()
   @IsString()
   descripcion: string;
@@ -29,4 +30,12 @@ export class UpdateProductoDto {
   @IsOptional()
   @IsNumber()
   categoriaId?: number;
+=======
+            @IsOptional()
+            @IsNumber()
+            categoriaId?: number;
+
+            @IsOptional()
+            activo: boolean;
+>>>>>>> aaf5165ed75bfdca73d65526775e36059574d464
 }

@@ -29,4 +29,7 @@ export class UpdateProductoDto {
             @IsOptional()
             @IsNumber()
             categoriaId?: number;
+
+            @IsOptional()
+            activo: boolean;
 }

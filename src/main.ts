@@ -12,10 +12,11 @@ async function bootstrap() {
     }),
   );
 
-  const allowedOrigins =
-    process.env.NODE_ENV === 'production'
-      ? ['https://tu-frontend-produccion.com'] 
-      : ['http://localhost:8100']; 
+  const allowedOrigins = [
+    'http://localhost:8100',
+    'capacitor://localhost',
+    'ionic://localhost',
+    ];
 
   app.enableCors({
     origin: allowedOrigins,

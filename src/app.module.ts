@@ -12,33 +12,28 @@ import { ComprasModule } from './compras/compras.module';
 import { VentasModule } from './ventas/ventas.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
-// Permite activar Firestore y deshabilitar TypeORM con DATA_SOURCE=firestore
-const dbModule =
-  process.env['DATA_SOURCE'] === 'firestore'
-    ? []
-    : [
-        TypeOrmModule.forRootAsync({
-          imports: [ConfigModule],
-          useFactory: (configService: ConfigService) => ({
-            type: 'mysql',
-            host: configService.get<string>('DB_HOST', 'localhost'),
-            port: configService.get<number>('DB_PORT', 3306),
-            username: configService.get<string>('DB_USERNAME', 'root'),
-            password: configService.get<string>('DB_PASSWORD', ''),
-            database: configService.get<string>('DB_DATABASE', 'tiendita_db'),
-            autoLoadEntities: true,
-            synchronize: configService.get<string>('NODE_ENV') !== 'production',
-          }),
-          inject: [ConfigService],
-        }),
-      ];
-
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    ...dbModule,
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get<string>('DB_HOST'),
+        port: configService.get<number>('DB_PORT'),
+        username: configService.get<string>('DB_USERNAME'),
+        password: configService.get<string>('DB_PASSWORD'),
+        database: configService.get<string>('DB_DATABASE'),
+        ssl: {
+          rejectUnauthorized: false, // necesario para Render
+        },
+        autoLoadEntities: true,
+        synchronize: false,
+      }),
+      inject: [ConfigService],
+    }),
     UsuariosModule,
     DetallesVentasModule,
     DetalleComprasModule,

@@ -11,7 +11,6 @@ import { ProveedoresModule } from './proveedores/proveedores.module';
 import { ComprasModule } from './compras/compras.module';
 import { VentasModule } from './ventas/ventas.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { FirebaseModule } from './firebase/firebase.module';
 
 // Permite activar Firestore y deshabilitar TypeORM con DATA_SOURCE=firestore
 const dbModule =
@@ -34,16 +33,12 @@ const dbModule =
         }),
       ];
 
-// Importa FirebaseModule solo cuando se usa Firestore
-const firebaseModule = process.env['DATA_SOURCE'] === 'firestore' ? [FirebaseModule] : [];
-
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
     ...dbModule,
-    ...firebaseModule,
     UsuariosModule,
     DetallesVentasModule,
     DetalleComprasModule,
